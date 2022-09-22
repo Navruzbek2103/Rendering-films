@@ -55,9 +55,8 @@ enterOptionValue(forOptionValueBox);
 
 
 // Option value`larini render qilish.
-
-let optionCard = [];
 elSelect.addEventListener("change", () =>{
+  let optionCard = [];
   elRow.innerHTML = "";
   function renderOption(option){
     if(elSelect.value === 'all'){
@@ -72,18 +71,39 @@ elSelect.addEventListener("change", () =>{
     }
     renderCards(optionCard)
   }
-  renderOption(films)
+  renderOption(films);
+
+// _____________________________________________________________________________
+
+  // films title`larini search orqali topish.
+
+  elInput.addEventListener("input", () =>{
+    let searchedArray = [];
+    let searchword = elInput.value.trim().toLowerCase();
+
+    function searchingInputValue (array){
+      elRow.innerHTML = "";
+      array.forEach(element => {
+        let elementTrim = element.title.trim().toLowerCase();
+        if(elementTrim.includes(searchword)){
+          searchedArray.push(element);
+        }
+      });
+      renderCards(searchedArray)
+    }
+    searchingInputValue(optionCard)
+  })
 })
 
 
 // films title`larini search orqali topish.
 
-elInput.addEventListener("input", (evt) =>{
+elInput.addEventListener("input", () =>{
   let searchedArray = [];
   let searchword = elInput.value.trim().toLowerCase();
-  elRow.innerHTML = "";
 
   function searchingInputValue (array){
+    elRow.innerHTML = "";
     array.forEach(element => {
       let elementTrim = element.title.trim().toLowerCase();
       if(elementTrim.includes(searchword)){
@@ -92,6 +112,5 @@ elInput.addEventListener("input", (evt) =>{
     });
     renderCards(searchedArray)
   }
-  console.log(optionCard);
   searchingInputValue(films)
 })

@@ -3,5 +3,21 @@
 }
 
 select, input{
-  font-size: 25px;
+  font-size: 18px;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+@media only screen and (max-width: 560px){
+  body{
+    background-color: bisque;
+  }
+
+  .header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
 }
