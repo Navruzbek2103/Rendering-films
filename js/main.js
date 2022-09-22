@@ -1,77 +1,97 @@
 let elRow = document.querySelector(".row");
-let cardFragment = document.createDocumentFragment();
-let elSelect = document.querySelector("#select");
+let cardsFragment = document.createDocumentFragment();
+let elSelect = document.querySelector(".select");
+let elInput = document.querySelector(".search-input");
 
-function renderCards(array){
-  array.forEach(element => {
-    let addedGenre = element.genres.map(genre =>{
-      return genre;
-    });
-    let elCard = document.createElement("div");
-    elCard.setAttribute("class", "col")
-    elCard.innerHTML = `
-    <div class="col">
+function renderCards(cardsArray){
+  cardsArray.forEach(element => {
+    let genre = element.genres.map(genre => genre)
+    let col = document.createElement("div");
+    col.setAttribute("class", "col");
+    col.innerHTML = `
       <div class="card">
         <img src="${element.poster}" class="card-img-top" alt="${element.title}">
         <div class="card-body">
           <h5 class="card-title">${element.title}</h5>
           <p class="card-text">${element.overview}</p>
+          <p class="card-text">${"<strong>Movies of release date: </strong>" + new Date(element.release_date).getFullYear()}</p>
           <ul class="list-unstyled">
-            <li>
-              ${
-                "<strong>Film genres: </strong>" + addedGenre.map(item => " " + item)
-              }
-            </li>
+            ${"<strong>Film genres: </strong>" + genre}
           </ul>
         </div>
       </div>
-    </div>
     `
-    cardFragment.appendChild(elCard);
+    cardsFragment.appendChild(col)
   });
-  elRow.appendChild(cardFragment)
+  elRow.appendChild(cardsFragment);
 }
-renderCards(films);
+renderCards(films)
 
-let optionBox = [];
-
-function sortingOption (option){
-  option.forEach(element => {
-    element.genres.forEach(item => {
-      if(!optionBox.includes(item)){
-        optionBox.push(item)
+// filmdagi o'xshash janrlarni bitta arrayga yig'ish
+let forOptionValueBox = [];
+function findOptionValue (filmGenres){
+  filmGenres.forEach(element => {
+    element.genres.forEach(genre => {
+      if(!forOptionValueBox.includes(genre)){
+        forOptionValueBox.push(genre);
       }
     });
   });
 }
-sortingOption(films)
+findOptionValue(films)
 
-let addOptionArray = [];
-let optionFragment = document.createDocumentFragment();
-function renderOption(toOption){
-  toOption.forEach(element => {
+// Yig'ilgan film janrlarini option ga terish
+
+let newOptionFragment = document.createDocumentFragment();
+function enterOptionValue (genresList){
+  genresList.forEach(element => {
     let newOption = document.createElement("option");
     newOption.textContent = element;
-    optionFragment.appendChild(newOption);
+    newOptionFragment.appendChild(newOption);
   });
-
-  elSelect.appendChild(optionFragment)
+  elSelect.appendChild(newOptionFragment)
 }
-renderOption(optionBox)
+enterOptionValue(forOptionValueBox);
 
+
+// Option value`larini render qilish.
+
+let optionCard = [];
 elSelect.addEventListener("change", () =>{
-  let pushingArray = [];
-  elRow.textContent = "";
-  if(elSelect.value === "All"){
-    pushingArray = films;
+  elRow.innerHTML = "";
+  function renderOption(option){
+    if(elSelect.value === 'all'){
+      optionCard = films;
+    }
+    else{
+      option.forEach(element => {
+        if(element.genres.includes(elSelect.value)){
+          optionCard.push(element);
+        }
+      });
+    }
+    renderCards(optionCard)
   }
-  else{
-    films.forEach(element => {
-      if(element.genres.includes(elSelect.value)){
-        pushingArray.push(element)
+  renderOption(films)
+})
+
+
+// films title`larini search orqali topish.
+
+elInput.addEventListener("input", (evt) =>{
+  let searchedArray = [];
+  let searchword = elInput.value.trim().toLowerCase();
+  elRow.innerHTML = "";
+
+  function searchingInputValue (array){
+    array.forEach(element => {
+      let elementTrim = element.title.trim().toLowerCase();
+      if(elementTrim.includes(searchword)){
+        searchedArray.push(element);
       }
     });
+    renderCards(searchedArray)
   }
-  
-  renderCards(pushingArray)
+  console.log(optionCard);
+  searchingInputValue(films)
 })
